@@ -1,11 +1,9 @@
-<%@page import="br.com.caelum.produtos.modelo.Produto"%>
-<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <head>
 <script type="text/javascript" src="<c:url value="/js/jquery.js"/>"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -23,6 +21,7 @@
 	<div id="mensagem"></div>
 	<table width="100%">
 		<tr>
+			<td>Contador</td>
 			<td width="20%">Nome</td>
 			<td>Preco</td>
 			<td>Descricao</td>
@@ -31,27 +30,45 @@
 			<td width="20%">Remover?</td>
 		</tr>
 		
-		<%
-			List<Produto> produtoList = (List<Produto>) request.getAttribute("produtoList");
-			for(Produto p : produtoList) {
-		%>
+		<!-- Taglib JSTL COM EL -->
+		<c:forEach var="p" items="${produtoList}" varStatus="st">
 		
-			<tr id="produto<%= p.getId() %>">
-				<td><%= p.getNome().toUpperCase() %></td>
-				<td><%= p.getPreco() %></td>
-				<td><%= p.getDescricao() %></td>
-				<td><%= p.getDataInicioVenda().getTime() %></td>
-				<% if(p.isUsado()) { %>
-				<td>Sim</td>
-				<% } else { %>
-				<td>Não</td>
-				<% } %>
-				<td><a href="#" onclick="return removeProduto(<%= p.getId() %>)">Remover</a></td>
+			<tr id="produto${p.id}">
+				<td>Contador: ${st.count}</td>
+				<td>${p.nome.toUpperCase()}</td>
+				<td>
+					<fmt:formatNumber value="${p.preco}" type="currency" />
+				</td>
+				<td>${p.descricao}</td>
+				<td>
+					<fmt:formatDate value="${p.dataInicioVenda.time}" pattern="EEEE, dd 'de' MMMM 'de' yyyy"/>
+				</td>
+				
+				<!-- FUNCIONA COMO UM SWITCH CASE, MAS POSSUÍ UM ELSE COMO OTHERWISE -->
+				<c:choose>
+					
+					<c:when test="${p.usado}">
+						<td>Sim</td>
+					</c:when>
+					
+					<c:otherwise>
+						<td>Não</td>
+					</c:otherwise>
+					
+				</c:choose>
+				
+				<td><a href="#" onclick="return removeProduto(${p.id})">Remover</a></td>
 			</tr>
-		<%
-			}
-		%>
+		</c:forEach>
+		
 	</table>
-	<a href="/produtos/produto/formulario">Adicionar um produto</a>
+	
+	<!-- USANDO ESTA TAG, NÃO PRECISAMOS MUDAR O CONTEXT ROOT (PASTA DA APLICAÇÃO) QUANDO O SITE ESTIVER EM PRODUÇÃO (GERALMENTE O RETIRAMOS, POIS FICA NA RAIZ) -->
+	<c:url value="/produto/formulario" var="urlAdicionar" />
+	<a href="${urlAdicionar}">Adicionar um produto (c:url)</a>
+	
+	<!-- CAMINHO COMPLETO QUE MUDA SE FOR PARA DEPLOY -->
+	<a href="/produtos/produto/formulario">Adicionar um produto (Sem JSTL)</a>
+	
 </body>
 </html>
