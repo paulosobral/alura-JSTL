@@ -18,6 +18,7 @@
 	</script>
 
 	<h1>Produtos</h1>
+	<h2><fmt:message key="mensagem.bemvindo" /></h2>
 	<div id="mensagem"></div>
 	<table width="100%">
 		<tr>
@@ -68,7 +69,9 @@
 	<a href="${urlAdicionar}">Adicionar um produto (c:url)</a>
 	
 	<!-- CAMINHO COMPLETO QUE MUDA SE FOR PARA DEPLOY -->
-	<a href="/produtos/produto/formulario">Adicionar um produto (Sem JSTL)</a>
+	<a href="/produtos/produto/formulario"><fmt:message key="mensagem.novoProduto" /></a>
+	
+	<c:import url="../_comum/rodape.jsp" />
 	
 </body>
 </html>
